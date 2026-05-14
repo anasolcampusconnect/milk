@@ -2,9 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { usePathname, useRouter } from 'expo-router';
 import React, { ComponentProps } from 'react';
-import { Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const { width } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 type IoniconsName = ComponentProps<typeof Ionicons>['name'];
 
@@ -28,31 +28,33 @@ const BottomTab = () => {
 
   const isActive = (path: string) => pathname === path;
 
-  if (Platform.OS === 'web') return null;
+  // REMOVED: The web restriction is gone! It will now render on all platforms.
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#FFFFFF', '#F8F9FA']} style={styles.tabBar}>
-        {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab.name}
-            style={styles.tabItem}
-            onPress={() => router.push(tab.path as any)}
-            activeOpacity={0.7}
-          >
-            <View style={styles.iconContainer}>
-              <Ionicons
-                name={isActive(tab.path) ? tab.activeIcon : tab.icon}
-                size={24}
-                color={isActive(tab.path) ? '#667eea' : '#999'}
-              />
-              {isActive(tab.path) ? <View style={styles.activeDot} /> : null}
-            </View>
-            <Text style={[styles.tabLabel, isActive(tab.path) && styles.tabLabelActive]}>
-              {tab.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      <LinearGradient colors={['#FFFFFF', '#F8F9FA']} style={styles.tabBarBackground}>
+        <View style={[styles.tabBar, isWeb && styles.webWidthLimit]}>
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab.name}
+              style={styles.tabItem}
+              onPress={() => router.push(tab.path as any)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.iconContainer}>
+                <Ionicons
+                  name={isActive(tab.path) ? tab.activeIcon : tab.icon}
+                  size={24}
+                  color={isActive(tab.path) ? '#667eea' : '#999'}
+                />
+                {isActive(tab.path) && <View style={styles.activeDot} />}
+              </View>
+              <Text style={[styles.tabLabel, isActive(tab.path) && styles.tabLabelActive]}>
+                {tab.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </LinearGradient>
     </View>
   );
@@ -66,10 +68,7 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 1000,
   },
-  tabBar: {
-    flexDirection: 'row',
-    height: Platform.OS === "ios" ? 75 : 70,
-    paddingBottom: Platform.OS === "ios" ? 15 : 10,
+  tabBarBackground: {
     borderTopWidth: 1,
     borderTopColor: '#EBF0FF',
     shadowColor: '#000',
@@ -77,13 +76,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 20,
+  },
+  tabBar: {
+    flexDirection: 'row',
+    height: Platform.OS === 'ios' ? 85 : 85,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 20,
     justifyContent: 'space-around',
     alignItems: 'center',
+    width: '100%',
+  },
+  webWidthLimit: {
+    maxWidth: 600, // Keeps the tabs grouped nicely in the center on large screens
+    alignSelf: 'center',
   },
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: width / 4,
+    flex: 1, // Uses flex instead of fixed width to scale perfectly
   },
   iconContainer: {
     position: 'relative',
