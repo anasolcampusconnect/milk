@@ -11,6 +11,7 @@ import {
   TextInput,
   FlatList,
   Platform,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -37,11 +38,7 @@ const HomePage = () => {
     }).start();
   }, []);
 
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
+  // Header is always visible (persistent navbar)
 
   const categories: { id: string; name: string; icon: IoniconsName; color: string }[] = [
     { id: 'all', name: 'All', icon: 'grid-outline', color: '#667eea' },
@@ -90,7 +87,7 @@ const HomePage = () => {
     <TouchableOpacity 
       style={[styles.productCard, isWeb && styles.webProductCard]} 
       activeOpacity={0.9}
-      onPress={() => router.push(`/products`)}
+      onPress={() => router.push(`/products`)} // Optional: also route from here
     >
       <View style={[styles.productImageContainer, isWeb && styles.webProductImageContainer]}>
         <View style={styles.productImagePlaceholder}>
@@ -124,25 +121,40 @@ const HomePage = () => {
 
   return (
     <View style={styles.container}>
-      {/* Animated Header - Constrained for Web */}
-      <Animated.View style={[styles.header, { opacity: headerOpacity }]}>
+      {/* Persistent Header - Always Visible */}
+      <View style={styles.header}>
         <LinearGradient colors={['#FFF', '#F8F9FA']} style={styles.headerGradient}>
           <View style={[styles.headerContent, isWeb && styles.webWidthLimit]}>
             <TouchableOpacity>
               <Ionicons name="menu-outline" size={28} color="#333" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>DoodhWala</Text>
-            <View style={styles.headerActions}>
-              <TouchableOpacity onPress={() => router.replace('/login')} style={styles.logoutBtn}>
-                <Ionicons name="log-out-outline" size={26} color="#E91E63" />
-              </TouchableOpacity>
-              <TouchableOpacity>
+            <View style={{ flexDirection: 'row', gap: 15 }}>
+              <TouchableOpacity onPress={() => router.push('/cart' as any)}>
                 <Ionicons name="cart-outline" size={28} color="#333" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                if (Platform.OS === 'web') {
+                  if (window.confirm('Are you sure you want to logout?')) {
+                    router.replace('/login' as any);
+                  }
+                } else {
+                  Alert.alert(
+                    'Logout',
+                    'Are you sure you want to logout?',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      { text: 'Logout', style: 'destructive', onPress: () => router.replace('/login' as any) },
+                    ]
+                  );
+                }
+              }}>
+                <Ionicons name="log-out-outline" size={28} color="#e53e3e" />
               </TouchableOpacity>
             </View>
           </View>
         </LinearGradient>
-      </Animated.View>
+      </View>
 
       <Animated.ScrollView
         style={styles.scrollView}
@@ -209,29 +221,31 @@ const HomePage = () => {
               </TouchableOpacity>
             </View>
 
+            {/* Categories */}
             {/* Categories Section */}
-            <View style={[styles.section, isWeb && styles.webWidthLimit]}>
-              <Text style={styles.sectionTitle}>Shop by Category</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
-                {categories.map((category) => (
-                  <TouchableOpacity 
-                    key={category.id} 
-                    style={styles.categoryCard} 
-                    onPress={() => {
-                      router.push({
-                        pathname: '/products',
-                        params: { category: category.id }
-                      });
-                    }}
-                  >
-                    <View style={[styles.categoryIcon, { backgroundColor: `${category.color}15` }]}>
-                      <Ionicons name={category.icon} size={24} color={category.color} />
-                    </View>
-                    <Text style={styles.categoryName}>{category.name}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+          <View style={[styles.section, isWeb && styles.webWidthLimit]}>
+            <Text style={styles.sectionTitle}>Shop by Category</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
+              {categories.map((category) => (
+                <TouchableOpacity 
+                  key={category.id} 
+                  style={styles.categoryCard} 
+                  onPress={() => {
+                    // CHANGE: Navigate to products page with the category ID
+                    router.push({
+                      pathname: '/products',
+                      params: { category: category.id }
+                    });
+                  }}
+                >
+                  <View style={[styles.categoryIcon, { backgroundColor: `${category.color}15` }]}>
+                    <Ionicons name={category.icon} size={24} color={category.color} />
+                  </View>
+                  <Text style={styles.categoryName}>{category.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
 
             {/* Offers Section */}
             <View style={styles.offersSection}>
@@ -430,13 +444,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
   },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoutBtn: {
-    marginRight: 15,
-  },
   headerTitle: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -449,7 +456,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   heroSection: {
-    paddingTop: Platform.OS === 'ios' ? 100 : (isWeb ? 60 : 80),
+    paddingTop: Platform.OS === 'ios' ? 100 : (isWeb ? 80 : 90),
     paddingHorizontal: 20,
     paddingBottom: 30,
     borderBottomLeftRadius: 30,

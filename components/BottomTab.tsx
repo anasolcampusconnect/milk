@@ -24,7 +24,7 @@ const BottomTab = () => {
     { name: 'Home', icon: 'home-outline', activeIcon: 'home', path: '/dashboard' }, //
     { name: 'Products', icon: 'grid-outline', activeIcon: 'grid', path: '/products' }, //
     { name: 'Cart', icon: 'cart-outline', activeIcon: 'cart', path: '/cart' }, //
-    { name: 'Profile', icon: 'person-outline', activeIcon: 'person', path: '/wishlist' }, //
+    { name: 'Wishlist', icon: 'heart-outline', activeIcon: 'heart', path: '/wishlist' }, //
   ];
 
   // Helper to check if the current tab is active based on the URL path

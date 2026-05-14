@@ -11,10 +11,13 @@ import {
   FlatList,
   StatusBar,
   Platform,
+  Alert, // Imported Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { BottomTabBar } from '@react-navigation/bottom-tabs';
+import BottomTab from '@/components/BottomTab';
 
 const { width } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
@@ -32,12 +35,12 @@ const ProductsPage = () => {
   }, [params.category]);
 
   const categories = [
-    { id: 'all', name: 'All Products', icon: 'grid-outline' as const, color: '#667eea' },
-    { id: 'milk', name: 'Fresh Milk', icon: 'water-outline' as const, color: '#667eea' },
-    { id: 'curd', name: 'Curd', icon: 'nutrition-outline' as const, color: '#667eea' },
-    { id: 'paneer', name: 'Paneer', icon: 'restaurant-outline' as const, color: '#667eea' },
-    { id: 'ghee', name: 'Ghee', icon: 'flame-outline' as const, color: '#667eea' },
-    { id: 'butter', name: 'Butter', icon: 'cube-outline' as const, color: '#667eea' },
+    { id: 'all', name: 'All Products', icon: 'grid-outline' as const, color: '#4CAF50' },
+    { id: 'milk', name: 'Fresh Milk', icon: 'water-outline' as const, color: '#4CAF50' },
+    { id: 'curd', name: 'Curd', icon: 'nutrition-outline' as const, color: '#81C784' },
+    { id: 'paneer', name: 'Paneer', icon: 'restaurant-outline' as const, color: '#C8E6C9' },
+    { id: 'ghee', name: 'Ghee', icon: 'flame-outline' as const, color: '#E1BEE7' },
+    { id: 'butter', name: 'Butter', icon: 'cube-outline' as const, color: '#9C27B0' },
   ];
 
   const products = [
@@ -52,8 +55,19 @@ const ProductsPage = () => {
     ? products 
     : products.filter(p => p.category === selectedCategory);
 
-  const addToCart = (id: number) => {
-    setCartItems(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  // Updated addToCart to accept the whole item and trigger an alert
+  const addToCart = (item: any) => {
+    setCartItems(prev => ({ ...prev, [item.id]: (prev[item.id] || 0) + 1 }));
+    
+    if (isWeb) {
+      window.alert(`Added to Cart: ${item.name} has been added to your cart.`);
+    } else {
+      Alert.alert(
+        "Added to Cart",
+        `${item.name} has been added to your cart.`,
+        [{ text: "OK", style: "default" }]
+      );
+    }
   };
 
   const renderProductCard = ({ item }: { item: any }) => (
@@ -93,7 +107,7 @@ const ProductsPage = () => {
             <Text style={styles.pUnit}>/{item.unit}</Text>
           </View>
           <TouchableOpacity 
-            onPress={() => addToCart(item.id)} 
+            onPress={() => addToCart(item)} // Passed the full item to the function
             style={styles.addBtn}
             activeOpacity={0.8}
           >
@@ -247,6 +261,7 @@ const ProductsPage = () => {
           />
         </View>
       </Animated.ScrollView>
+      <BottomTab /> {/* Added BottomTabBar for navigation */}    
     </View>
   );
 };
@@ -399,7 +414,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   columnWrapper: { 
-    justifyContent: 'space-between' 
+   justifyContent: isWeb ? 'flex-start' : 'space-between',
+    gap: isWeb ? '2.66%' : 0, 
   },
   pCard: { 
     backgroundColor: '#FFF', 
