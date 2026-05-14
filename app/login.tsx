@@ -1,43 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  SafeAreaView, 
-  KeyboardAvoidingView, 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
   Platform,
   Image,
   ActivityIndicator,
   StatusBar,
   Animated,
   Dimensions,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 type AuthView = 'login' | 'register' | 'forgot';
 
 const LoginPage = () => {
   const router = useRouter();
+  const { login } = useAuth();
+
   const [view, setView] = useState<AuthView>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(15)).current;
 
   useEffect(() => {
-    // Entrance animation
     Animated.parallel([
       Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
       Animated.timing(slideAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
@@ -45,23 +48,63 @@ const LoginPage = () => {
   }, []);
 
   const switchView = (newView: AuthView) => {
-    // Subtle transition between cards
     Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => {
       setView(newView);
       Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
     });
   };
 
+  const showAlert = (title: string, message: string) => {
+    if (isWeb) {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
   const handleAuthAction = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      if (view === 'login' || view === 'register') {
-        router.push('./dashboard');
-      } else {
-        switchView('login');
+    if (view === 'login') {
+      if (!email || !password) {
+        showAlert("Error", "Please fill in all fields");
+        return;
       }
-    }, 1500);
+
+      // Hardcoded Credential Check
+      if (email.toLowerCase() === 'user@test.com' && password === '123456') {
+        setLoading(true);
+        try {
+          await login(email, password);
+          router.replace('/dashboard');
+        } catch (error) {
+          showAlert("Login Failed", "An error occurred during login.");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        showAlert("Invalid Credentials", "Please use:\nEmail: user@test.com\nPassword: 123456");
+      }
+
+    } else if (view === 'register') {
+      if (!name || !email || !password) {
+        showAlert("Error", "Please fill in all fields to register");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        // Automatically log them in after "registering"
+        await login(email, password);
+        router.replace('/dashboard');
+      } catch (error) {
+        showAlert("Registration Failed", "Something went wrong.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Handle forgot password logic here
+      showAlert("Reset Link Sent", "Check your email for instructions.");
+      switchView('login');
+    }
   };
 
   return (
@@ -72,23 +115,23 @@ const LoginPage = () => {
         style={StyleSheet.absoluteFill}
       />
 
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.flex}
       >
         <SafeAreaView style={styles.flex}>
-          <ScrollView 
+          <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
             <Animated.View style={[
-              styles.cardWrapper, 
+              styles.cardWrapper,
               { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
             ]}>
               <View style={styles.loginCard}>
-                {/* Image Header - Common for all views */}
+
                 <View style={styles.imageHeader}>
-                  <Image 
+                  <Image
                     source={require('../assets/images/hero.png')}
                     style={styles.heroImage}
                     resizeMode="cover"
@@ -104,11 +147,11 @@ const LoginPage = () => {
                 </View>
 
                 <View style={styles.cardBody}>
-                  {view === 'login' && (
+                  {view === 'login' ? (
                     <>
                       <View style={styles.headerText}>
                         <Text style={styles.title}>Welcome Back</Text>
-                        <Text style={styles.subtitle}>Sign in to your farm dashboard</Text>
+                        <Text style={styles.subtitle}>Sign in to continue</Text>
                       </View>
 
                       <View style={styles.inputsGroup}>
@@ -116,7 +159,7 @@ const LoginPage = () => {
                           <Ionicons name="mail-outline" size={20} color="#7B61FF" style={styles.icon} />
                           <TextInput
                             style={styles.input}
-                            placeholder="Email or Phone"
+                            placeholder="Email (user@test.com)"
                             placeholderTextColor="#9CA3AF"
                             value={email}
                             onChangeText={setEmail}
@@ -127,7 +170,7 @@ const LoginPage = () => {
                           <Ionicons name="lock-closed-outline" size={20} color="#7B61FF" style={styles.icon} />
                           <TextInput
                             style={styles.input}
-                            placeholder="Password"
+                            placeholder="Password (123456)"
                             placeholderTextColor="#9CA3AF"
                             secureTextEntry={!showPassword}
                             value={password}
@@ -166,9 +209,9 @@ const LoginPage = () => {
                         </TouchableOpacity>
                       </View>
                     </>
-                  )}
+                  ) : null}
 
-                  {view === 'register' && (
+                  {view === 'register' ? (
                     <>
                       <View style={styles.headerText}>
                         <Text style={styles.title}>Join MilkConnect</Text>
@@ -207,6 +250,9 @@ const LoginPage = () => {
                             value={password}
                             onChangeText={setPassword}
                           />
+                          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                            <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={20} color="#9CA3AF" />
+                          </TouchableOpacity>
                         </View>
                       </View>
 
@@ -223,9 +269,9 @@ const LoginPage = () => {
                         </TouchableOpacity>
                       </View>
                     </>
-                  )}
+                  ) : null}
 
-                  {view === 'forgot' && (
+                  {view === 'forgot' ? (
                     <>
                       <View style={styles.headerText}>
                         <Text style={styles.title}>Reset Password</Text>
@@ -259,7 +305,7 @@ const LoginPage = () => {
                         </TouchableOpacity>
                       </View>
                     </>
-                  )}
+                  ) : null}
                 </View>
               </View>
             </Animated.View>

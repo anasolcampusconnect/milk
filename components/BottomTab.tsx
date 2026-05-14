@@ -1,8 +1,8 @@
-import React, { ComponentProps } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, usePathname } from 'expo-router'; //
-import { LinearGradient } from 'expo-linear-gradient'; //
+import { LinearGradient } from 'expo-linear-gradient';
+import { usePathname, useRouter } from 'expo-router';
+import React, { ComponentProps } from 'react';
+import { Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -16,21 +16,18 @@ interface TabItem {
 }
 
 const BottomTab = () => {
-  const router = useRouter(); //
-  const pathname = usePathname(); //
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Define navigation items matching your RootLayout stack names
   const tabs: TabItem[] = [
-    { name: 'Home', icon: 'home-outline', activeIcon: 'home', path: '/dashboard' }, //
-    { name: 'Products', icon: 'grid-outline', activeIcon: 'grid', path: '/products' }, //
-    { name: 'Cart', icon: 'cart-outline', activeIcon: 'cart', path: '/cart' }, //
-    { name: 'Profile', icon: 'person-outline', activeIcon: 'person', path: '/wishlist' }, //
+    { name: 'Home', icon: 'home-outline', activeIcon: 'home', path: '/dashboard' },
+    { name: 'Products', icon: 'grid-outline', activeIcon: 'grid', path: '/products' },
+    { name: 'Cart', icon: 'cart-outline', activeIcon: 'cart', path: '/cart' },
+    { name: 'Wishlist', icon: 'heart-outline', activeIcon: 'heart', path: '/wishlist' },
   ];
 
-  // Helper to check if the current tab is active based on the URL path
   const isActive = (path: string) => pathname === path;
 
-  // Only show on mobile platforms to prevent overlapping with web NavigationBar
   if (Platform.OS === 'web') return null;
 
   return (
@@ -40,19 +37,19 @@ const BottomTab = () => {
           <TouchableOpacity
             key={tab.name}
             style={styles.tabItem}
-            onPress={() => router.push(tab.path as any)} // CHANGE: Trigger routing to defined path
+            onPress={() => router.push(tab.path as any)}
             activeOpacity={0.7}
           >
             <View style={styles.iconContainer}>
               <Ionicons
-                name={isActive(tab.path) ? tab.activeIcon : tab.icon} //
+                name={isActive(tab.path) ? tab.activeIcon : tab.icon}
                 size={24}
-                color={isActive(tab.path) ? '#667eea' : '#999'} //
+                color={isActive(tab.path) ? '#667eea' : '#999'}
               />
-              {isActive(tab.path) && <View style={styles.activeDot} />}
+              {isActive(tab.path) ? <View style={styles.activeDot} /> : null}
             </View>
             <Text style={[styles.tabLabel, isActive(tab.path) && styles.tabLabelActive]}>
-              {tab.name} {/* CHANGE: Render the tab name label */}
+              {tab.name}
             </Text>
           </TouchableOpacity>
         ))}
@@ -71,8 +68,8 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    height: Platform.OS === 'ios' ? 85 : 65,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
+    height: Platform.OS === "ios" ? 75 : 70,
+    paddingBottom: Platform.OS === "ios" ? 15 : 10,
     borderTopWidth: 1,
     borderTopColor: '#EBF0FF',
     shadowColor: '#000',

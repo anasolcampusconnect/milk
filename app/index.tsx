@@ -1,24 +1,27 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  ImageBackground, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  StatusBar, 
-  Platform, 
+import {
+  View,
+  Text,
+  ImageBackground,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  Platform,
   StyleSheet,
   ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../context/AuthContext'; // <-- 1. Import AuthContext
 
 const LivestockOnboarding = () => {
   const route = useRouter();
+  const { isLoggedIn } = useAuth(); // <-- 2. Get login state
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-      
+
       <ImageBackground
         source={require('../assets/images/cow1jpg.jpg')}
         style={styles.background}
@@ -26,53 +29,63 @@ const LivestockOnboarding = () => {
       >
         <View style={styles.overlay}>
           <SafeAreaView style={styles.safeArea}>
-            <ScrollView 
-              contentContainerStyle={styles.scrollContent} 
+            <ScrollView
+              contentContainerStyle={styles.scrollContent}
               bounces={false}
               showsVerticalScrollIndicator={false}
             >
-              
-              {/* Floating AR-style Tags */}
+
+
               <View style={styles.tagContainer}>
-                
-                {/* Natural Envi Tag */}
+
+
                 <View style={[styles.glassTag, styles.tag1]}>
                   <Text style={styles.tagText}>Natural Envi:</Text>
                   <Ionicons name="grid" size={14} color="white" />
                 </View>
 
-                {/* Weight Tag */}
+
                 <View style={[styles.glassTag, styles.tag2]}>
                   <Ionicons name="grid" size={14} color="white" />
                   <Text style={[styles.tagText, { marginLeft: 8 }]}>Weight 400kg +</Text>
                 </View>
 
-                {/* Free Diseases Tag */}
+
                 <View style={[styles.glassTag, styles.tag3]}>
                   <Text style={styles.tagText}>Free Diseases</Text>
                   <Ionicons name="grid" size={14} color="white" />
                 </View>
               </View>
 
-              {/* Bottom Content Section */}
+
               <View style={styles.bottomSection}>
                 <Text style={styles.title}>
                   The New Era of{"\n"}Livestock Farming
                 </Text>
-                
+
                 <Text style={styles.subtitle}>
                   The New Era of Livestock Farming blends smart technology with tradition to boost efficiency, sustainability, and welfare.
                 </Text>
 
-                {/* Get Started Button */}
-                <TouchableOpacity activeOpacity={0.8} style={styles.button}
-                onPress={(e) => route.push('/login')}>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.button}
+                  onPress={() => {
+                    // <-- 3. Route conditionally based on auth state
+                    if (isLoggedIn) {
+                      route.push('/dashboard');
+                    } else {
+                      route.push('/login');
+                    }
+                  }}
+                >
                   <View style={styles.iconCircle}>
                     <Ionicons name="grid" size={24} color="#3e4a3d" />
                   </View>
-                  
+
                   <Text style={styles.buttonText}>Get Started</Text>
-                  
+
                   <Ionicons name="chevron-forward" size={20} color="white" />
                 </TouchableOpacity>
               </View>
@@ -97,7 +110,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Slightly darker for better text contrast
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   safeArea: {
     flex: 1,
@@ -110,7 +123,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     minHeight: 350,
   },
-  // Base style for all translucent tags
   glassTag: {
     position: 'absolute',
     flexDirection: 'row',
@@ -150,7 +162,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     paddingTop: 20,
     width: '100%',
-    maxWidth: 600, // Keeps web version from looking too stretched
+    maxWidth: 600,
     alignSelf: 'center',
   },
   title: {

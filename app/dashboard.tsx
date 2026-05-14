@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, ComponentProps } from 'react';
+import React, { useEffect, useRef, useState, useCallback, ComponentProps } from 'react';
 import {
   View,
   Text,
@@ -11,11 +11,16 @@ import {
   TextInput,
   FlatList,
   Platform,
+  Alert,
+  ImageBackground,
+  RefreshControl,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import BottomTab from '../components/BottomTab';
+import { useAuth } from '../context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 // Helper to detect web environment
@@ -25,7 +30,11 @@ type IoniconsName = ComponentProps<typeof Ionicons>['name'];
 
 const HomePage = () => {
   const router = useRouter();
+  const { logout } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
   const scrollY = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -37,11 +46,15 @@ const HomePage = () => {
     }).start();
   }, []);
 
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    // Simulate data fetch
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+  // Header is always visible (persistent navbar)
 
   const categories: { id: string; name: string; icon: IoniconsName; color: string }[] = [
     { id: 'all', name: 'All', icon: 'grid-outline', color: '#667eea' },
@@ -53,18 +66,18 @@ const HomePage = () => {
   ];
 
   const products = [
-    { id: 1, name: 'Fresh Cow Milk', description: 'Pure & fresh cow milk, rich in calcium', price: 60, unit: 'Liter', originalPrice: 70, image: 'https://via.placeholder.com/150', category: 'milk', rating: 4.8, reviews: 234, badge: 'Popular', type: 'Cow Milk' },
-    { id: 2, name: 'Buffalo Milk', description: 'Creamy & thick buffalo milk', price: 75, unit: 'Liter', originalPrice: 85, image: 'https://via.placeholder.com/150', category: 'milk', rating: 4.7, reviews: 189, badge: 'Best Seller', type: 'Buffalo Milk' },
-    { id: 3, name: 'Organic Curd', description: 'Homestyle probiotic curd', price: 45, unit: '500gm', originalPrice: 55, image: 'https://via.placeholder.com/150', category: 'curd', rating: 4.9, reviews: 456, badge: 'Organic', type: 'Curd' },
-    { id: 4, name: 'Fresh Paneer', description: 'Soft & fresh cottage cheese', price: 120, unit: '500gm', originalPrice: 140, image: 'https://via.placeholder.com/150', category: 'paneer', rating: 4.8, reviews: 321, badge: 'Fresh', type: 'Paneer' },
-    { id: 5, name: 'Pure Ghee', description: 'Traditional bilona ghee', price: 350, unit: '1Ltr', originalPrice: 400, image: 'https://via.placeholder.com/150', category: 'ghee', rating: 4.9, reviews: 567, badge: 'Pure', type: 'Ghee' },
-    { id: 6, name: 'Salted Butter', description: 'Creamy & smooth butter', price: 55, unit: '200gm', originalPrice: 65, image: 'https://via.placeholder.com/150', category: 'butter', rating: 4.6, reviews: 178, badge: 'New', type: 'Butter' },
-    { id: 7, name: 'Flavored Milk - Chocolate', description: 'Healthy chocolate milk for kids', price: 40, unit: '200ml', originalPrice: 50, image: 'https://via.placeholder.com/150', category: 'milk', rating: 4.7, reviews: 234, badge: 'Kids Special', type: 'Flavored Milk' },
-    { id: 8, name: 'Low Fat Milk', description: 'Skimmed milk for healthy lifestyle', price: 55, unit: 'Liter', originalPrice: 65, image: 'https://via.placeholder.com/150', category: 'milk', rating: 4.5, reviews: 145, badge: 'Health', type: 'Low Fat' },
+    { id: 1, name: 'Fresh Cow Milk', description: 'Pure & fresh cow milk, rich in calcium', price: 60, unit: 'Liter', originalPrice: 70, image: require('../assets/images/cow_milk.png'), category: 'milk', rating: 4.8, reviews: 234, badge: 'Popular', type: 'Cow Milk' },
+    { id: 2, name: 'Buffalo Milk', description: 'Creamy & thick buffalo milk', price: 75, unit: 'Liter', originalPrice: 85, image: require('../assets/images/buffalo_milk.png'), category: 'milk', rating: 4.7, reviews: 189, badge: 'Best Seller', type: 'Buffalo Milk' },
+    { id: 3, name: 'Organic Curd', description: 'Homestyle probiotic curd', price: 45, unit: '500gm', originalPrice: 55, image: require('../assets/images/curd.png'), category: 'curd', rating: 4.9, reviews: 456, badge: 'Organic', type: 'Curd' },
+    { id: 4, name: 'Fresh Paneer', description: 'Soft & fresh cottage cheese', price: 120, unit: '500gm', originalPrice: 140, image: require('../assets/images/paneer.png'), category: 'paneer', rating: 4.8, reviews: 321, badge: 'Fresh', type: 'Paneer' },
+    { id: 5, name: 'Pure Ghee', description: 'Traditional bilona ghee', price: 350, unit: '1Ltr', originalPrice: 400, image: require('../assets/images/ghee.png'), category: 'ghee', rating: 4.9, reviews: 567, badge: 'Pure', type: 'Ghee' },
+    { id: 6, name: 'Salted Butter', description: 'Creamy & smooth butter', price: 55, unit: '200gm', originalPrice: 65, image: require('../assets/images/butter.png'), category: 'butter', rating: 4.6, reviews: 178, badge: 'New', type: 'Butter' },
+    { id: 7, name: 'Flavored Milk - Chocolate', description: 'Healthy chocolate milk for kids', price: 40, unit: '200ml', originalPrice: 50, image: require('../assets/images/chocolate_milk.png'), category: 'milk', rating: 4.7, reviews: 234, badge: 'Kids Special', type: 'Flavored Milk' },
+    { id: 8, name: 'Low Fat Milk', description: 'Skimmed milk for healthy lifestyle', price: 55, unit: 'Liter', originalPrice: 65, image: require('../assets/images/low_fat_milk.png'), category: 'milk', rating: 4.5, reviews: 145, badge: 'Health', type: 'Low Fat' },
   ];
 
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
+  const filteredProducts = selectedCategory === 'all'
+    ? products
     : products.filter(p => p.category === selectedCategory);
 
   const offers = [
@@ -87,20 +100,18 @@ const HomePage = () => {
   ];
 
   const renderProductCard = ({ item }: { item: any }) => (
-    <TouchableOpacity 
-      style={[styles.productCard, isWeb && styles.webProductCard]} 
+    <TouchableOpacity
+      style={[styles.productCard, isWeb && styles.webProductCard]}
       activeOpacity={0.9}
-      onPress={() => router.push(`/products`)} // Optional: also route from here
+      onPress={() => router.push({ pathname: '/product-details', params: { id: item.id } })}
     >
       <View style={[styles.productImageContainer, isWeb && styles.webProductImageContainer]}>
-        <View style={styles.productImagePlaceholder}>
-          <Ionicons name="water" size={50} color="#667eea" />
-        </View>
-        {item.badge && (
+        <Image source={item.image} style={styles.productImagePlaceholder} resizeMode="cover" />
+        {item.badge ? (
           <View style={[styles.productBadge, { backgroundColor: '#667eea' }]}>
             <Text style={styles.productBadgeText}>{item.badge}</Text>
           </View>
-        )}
+        ) : null}
       </View>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
@@ -124,24 +135,52 @@ const HomePage = () => {
 
   return (
     <View style={styles.container}>
-      {/* Animated Header - Constrained for Web */}
-      <Animated.View style={[styles.header, { opacity: headerOpacity }]}>
-        <LinearGradient colors={['#FFF', '#F8F9FA']} style={styles.headerGradient}>
+
+      <View style={styles.header}>
+        <LinearGradient colors={['#FFF', '#F8F9FA']} style={[styles.headerGradient, { paddingTop: isWeb ? 20 : Math.max(insets.top, 20) }]}>
           <View style={[styles.headerContent, isWeb && styles.webWidthLimit]}>
-            <TouchableOpacity>
-              <Ionicons name="menu-outline" size={28} color="#333" />
-            </TouchableOpacity>
+            <View style={{ position: 'relative', zIndex: 100 }}>
+              <TouchableOpacity onPress={() => setShowDropdown(!showDropdown)}>
+                <Ionicons name="menu-outline" size={28} color="#333" />
+              </TouchableOpacity>
+
+              {showDropdown ? (
+                <View style={styles.dropdownMenu}>
+                  <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); /* handle profile */ }}>
+                    <Ionicons name="person-outline" size={20} color="#333" />
+                    <Text style={styles.dropdownText}>My Profile</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); /* handle address */ }}>
+                    <Ionicons name="location-outline" size={20} color="#333" />
+                    <Text style={styles.dropdownText}>Delivery Address</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+            </View>
             <Text style={styles.headerTitle}>DoodhWala</Text>
-            <TouchableOpacity>
-              <Ionicons name="cart-outline" size={28} color="#333" />
-            </TouchableOpacity>
+            <View style={styles.headerActions}>
+              <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
+                <Ionicons name="log-out-outline" size={26} color="#E91E63" />
+              </TouchableOpacity>
+              
+            </View>
           </View>
         </LinearGradient>
-      </Animated.View>
+
+      </View>
 
       <Animated.ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#667eea']} // Android
+            tintColor="#667eea" // iOS
+            progressViewOffset={80} // Offset because of custom header
+          />
+        }
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: false }
@@ -149,14 +188,16 @@ const HomePage = () => {
         scrollEventThrottle={16}
       >
         <View style={styles.content}>
-          {/* Hero Section */}
-          <LinearGradient
-            colors={['#667eea', '#764ba2']}
+
+          <ImageBackground
+            source={require('../assets/images/hero_bg_modern.png')}
             style={[styles.heroSection, isWeb && styles.webHero]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
           >
-            <View style={[styles.heroContent, isWeb && styles.webWidthLimit]}>
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
+              style={StyleSheet.absoluteFillObject}
+            />
+            <View style={[styles.heroContent, isWeb && styles.webWidthLimit, { zIndex: 1 }]}>
               <Text style={[styles.heroTitle, isWeb && styles.webHeroTitle]}>Fresh Milk Delivered</Text>
               <Text style={styles.heroSubtitle}>Directly from farm to your doorstep</Text>
               <View style={styles.deliveryInfo}>
@@ -164,13 +205,13 @@ const HomePage = () => {
                 <Text style={styles.deliveryText}>Morning 6-8 AM • Evening 5-7 PM</Text>
               </View>
               <TouchableOpacity style={styles.orderButton}>
-                <Text style={styles.orderButtonText}>Order Now</Text>
-                <Ionicons name="arrow-forward" size={18} color="#667eea" />
+                <Text style={[styles.orderButtonText, { color: '#333' }]}>Order Now</Text>
+                <Ionicons name="arrow-forward" size={18} color="#333" />
               </TouchableOpacity>
             </View>
-            
-            {/* Stats section constrained for Web */}
-            <View style={[styles.heroStats, isWeb && styles.webWidthLimit, isWeb && { marginTop: 40 }]}>
+
+
+            <View style={[styles.heroStats, isWeb && styles.webWidthLimit, isWeb && { marginTop: 20 }, { zIndex: 1 }]}>
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>10K+</Text>
                 <Text style={styles.statLabel}>Happy Families</Text>
@@ -186,12 +227,12 @@ const HomePage = () => {
                 <Text style={styles.statLabel}>Customer Rating</Text>
               </View>
             </View>
-          </LinearGradient>
+          </ImageBackground>
 
-          {/* Wrapper for Web Centralization */}
+
           <View style={[isWeb && styles.webWidthLimit, isWeb && { alignSelf: 'center', width: '100%' }]}>
-            
-            {/* Search Bar */}
+
+
             <View style={styles.searchContainer}>
               <Ionicons name="search-outline" size={20} color="#999" style={styles.searchIcon} />
               <TextInput
@@ -204,15 +245,15 @@ const HomePage = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Categories */}
-            {/* Categories Section */}
+
+
           <View style={[styles.section, isWeb && styles.webWidthLimit]}>
             <Text style={styles.sectionTitle}>Shop by Category</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
               {categories.map((category) => (
-                <TouchableOpacity 
-                  key={category.id} 
-                  style={styles.categoryCard} 
+                <TouchableOpacity
+                  key={category.id}
+                  style={styles.categoryCard}
                   onPress={() => {
                     // CHANGE: Navigate to products page with the category ID
                     router.push({
@@ -230,7 +271,7 @@ const HomePage = () => {
             </ScrollView>
           </View>
 
-            {/* Offers Section */}
+
             <View style={styles.offersSection}>
               <Text style={styles.sectionTitle}>Special Offers</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.offersScroll}>
@@ -256,7 +297,7 @@ const HomePage = () => {
               </ScrollView>
             </View>
 
-            {/* Featured Products - Grid on Web, List on Android */}
+
             <View style={styles.productsSection}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Popular Products</Text>
@@ -275,11 +316,11 @@ const HomePage = () => {
               />
             </View>
 
-            {/* How It Works */}
+
             <View style={[styles.howItWorksSection, isWeb && { borderRadius: 30 }]}>
               <Text style={styles.sectionTitle}>How It Works</Text>
               <View style={styles.stepsContainer}>
-                {/* Step items stay responsive */}
+
                 <View style={styles.step}>
                   <LinearGradient colors={['#667eea', '#764ba2']} style={styles.stepIcon}>
                     <Ionicons name="cart-outline" size={28} color="#FFF" />
@@ -304,7 +345,7 @@ const HomePage = () => {
               </View>
             </View>
 
-            {/* Trust Badges */}
+
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.trustSection}>
               {trustBadges.map((badge) => (
                 <View key={badge.id} style={[styles.trustCard, isWeb && { minWidth: 200 }]}>
@@ -314,7 +355,7 @@ const HomePage = () => {
               ))}
             </ScrollView>
 
-            {/* Testimonials */}
+
             <View style={styles.testimonialsSection}>
               <Text style={styles.sectionTitle}>What Our Customers Say</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -345,13 +386,13 @@ const HomePage = () => {
               </ScrollView>
             </View>
 
-            {/* Subscription Banner */}
+
             <LinearGradient
               colors={['#48bb78', '#38a169']}
               style={[styles.subscriptionBanner, isWeb && { borderRadius: 30 }]}
             >
               <View style={styles.subscriptionContent}>
-                <Text style={styles.subscriptionTitle}>Subscribe & Save 15%</Text>
+                <Text style={styles.subscriptionTitle}>Subscribe and Save 15%</Text>
                 <Text style={styles.subscriptionDesc}>Get daily milk delivery without any hassle</Text>
                 <TouchableOpacity style={styles.subscriptionButton}>
                   <Text style={styles.subscriptionButtonText}>View Plans</Text>
@@ -360,6 +401,7 @@ const HomePage = () => {
               </View>
               <Ionicons name="water" size={isWeb ? 150 : 80} color="rgba(255,255,255,0.2)" style={styles.subscriptionIcon} />
             </LinearGradient>
+            <View style={{ height: 100 }} />
           </View>
         </View>
       </Animated.ScrollView>
@@ -379,16 +421,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
   },
-  section: { 
+  section: {
     marginTop: isWeb ? 60 : 30, // Adjust spacing for web vs mobile
-    paddingHorizontal: isWeb ? 0 : 20 
+    paddingHorizontal: isWeb ? 0 : 20
   },
-  catScroll: { 
+  catScroll: {
     paddingBottom: 10,
     paddingHorizontal: isWeb ? 0 : 15 // Keeps consistent margins for web and mobile
   },
   webHero: {
-    paddingVertical: 100,
+    paddingVertical: 80,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
   },
@@ -432,6 +474,42 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#667eea',
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  logoutBtn: {
+    padding: 4,
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 35,
+    left: 0,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 8,
+    width: 160,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+    zIndex: 1000,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  dropdownText: {
+    fontSize: 15,
+    color: '#333',
+    fontWeight: '500',
+  },
   scrollView: {
     flex: 1,
   },
@@ -439,15 +517,16 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   heroSection: {
-    paddingTop: Platform.OS === 'ios' ? 100 : (isWeb ? 60 : 80),
+    paddingTop: Platform.OS === 'ios' ? 100 : (isWeb ? 80 : 90),
     paddingHorizontal: 20,
-    paddingBottom: 30,
+    paddingBottom: 40,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
+    overflow: 'hidden',
   },
   heroContent: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 20,
   },
   heroTitle: {
     fontSize: 32,
