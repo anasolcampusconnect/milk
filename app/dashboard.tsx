@@ -90,7 +90,7 @@ const HomePage = () => {
     <TouchableOpacity 
       style={[styles.productCard, isWeb && styles.webProductCard]} 
       activeOpacity={0.9}
-      onPress={() => router.push(`/products`)} // Optional: also route from here
+      onPress={() => router.push(`/products`)}
     >
       <View style={[styles.productImageContainer, isWeb && styles.webProductImageContainer]}>
         <View style={styles.productImagePlaceholder}>
@@ -132,9 +132,14 @@ const HomePage = () => {
               <Ionicons name="menu-outline" size={28} color="#333" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>DoodhWala</Text>
-            <TouchableOpacity>
-              <Ionicons name="cart-outline" size={28} color="#333" />
-            </TouchableOpacity>
+            <View style={styles.headerActions}>
+              <TouchableOpacity onPress={() => router.replace('/login')} style={styles.logoutBtn}>
+                <Ionicons name="log-out-outline" size={26} color="#E91E63" />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Ionicons name="cart-outline" size={28} color="#333" />
+              </TouchableOpacity>
+            </View>
           </View>
         </LinearGradient>
       </Animated.View>
@@ -204,31 +209,29 @@ const HomePage = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Categories */}
             {/* Categories Section */}
-          <View style={[styles.section, isWeb && styles.webWidthLimit]}>
-            <Text style={styles.sectionTitle}>Shop by Category</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
-              {categories.map((category) => (
-                <TouchableOpacity 
-                  key={category.id} 
-                  style={styles.categoryCard} 
-                  onPress={() => {
-                    // CHANGE: Navigate to products page with the category ID
-                    router.push({
-                      pathname: '/products',
-                      params: { category: category.id }
-                    });
-                  }}
-                >
-                  <View style={[styles.categoryIcon, { backgroundColor: `${category.color}15` }]}>
-                    <Ionicons name={category.icon} size={24} color={category.color} />
-                  </View>
-                  <Text style={styles.categoryName}>{category.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
+            <View style={[styles.section, isWeb && styles.webWidthLimit]}>
+              <Text style={styles.sectionTitle}>Shop by Category</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
+                {categories.map((category) => (
+                  <TouchableOpacity 
+                    key={category.id} 
+                    style={styles.categoryCard} 
+                    onPress={() => {
+                      router.push({
+                        pathname: '/products',
+                        params: { category: category.id }
+                      });
+                    }}
+                  >
+                    <View style={[styles.categoryIcon, { backgroundColor: `${category.color}15` }]}>
+                      <Ionicons name={category.icon} size={24} color={category.color} />
+                    </View>
+                    <Text style={styles.categoryName}>{category.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
 
             {/* Offers Section */}
             <View style={styles.offersSection}>
@@ -426,6 +429,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoutBtn: {
+    marginRight: 15,
   },
   headerTitle: {
     fontSize: 22,
