@@ -40,9 +40,10 @@
         }
       ]
     ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+  "experiments": {
+  "typedRoutes": true,
+  "reactCompiler": true,
+  "baseUrl": "/school"
     }
   }
 }
