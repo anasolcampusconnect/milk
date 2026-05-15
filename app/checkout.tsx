@@ -35,7 +35,7 @@ const CheckoutPage = () => {
   const handlePlaceOrder = () => {
     if (isWeb) {
       window.alert('Order Placed Successfully! Your fresh dairy products are on the way.');
-      router.push('/');
+      router.push('/dashboard');
     } else {
       Alert.alert(
         "Order Confirmed!",
@@ -187,7 +187,7 @@ const CheckoutPage = () => {
       </ScrollView>
 
 
-      <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 15) }]}>
+      <View style={[styles.bottomBar, isWeb && styles.webBottomBar, { paddingBottom: Math.max(insets.bottom, 15) }]}>
         <View style={[styles.bottomContent, isWeb && styles.webWidthLimit]}>
           <View style={styles.totalInfo}>
             <Text style={styles.totalLabel}>Grand Total</Text>
@@ -437,6 +437,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 10,
     elevation: 20,
+  },
+  webBottomBar: {
+    position: 'relative',
+    borderTopWidth: 1,
+    shadowOpacity: 0,
+    elevation: 0,
+    paddingBottom: 20,
   },
   bottomContent: {
     flexDirection: 'row',

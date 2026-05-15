@@ -8,6 +8,7 @@ import {
   Platform,
   Image,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -71,10 +72,15 @@ const OrderHistoryPage = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState('All');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
-  const filteredOrders = activeTab === 'All' 
-    ? ordersData 
-    : ordersData.filter(order => order.status === activeTab);
+  const filteredOrders = ordersData.filter(order => {
+    const matchesTab = activeTab === 'All' || order.status === activeTab;
+    const matchesSearch = order.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesTab && matchesSearch;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -103,8 +109,8 @@ const OrderHistoryPage = () => {
               <Ionicons name="arrow-back" size={24} color="#333" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Order History</Text>
-            <TouchableOpacity style={styles.iconCircle}>
-              <Ionicons name="search-outline" size={24} color="#333" />
+            <TouchableOpacity onPress={() => setShowSearch(!showSearch)} style={styles.iconCircle}>
+              <Ionicons name={showSearch ? "close" : "search-outline"} size={24} color="#333" />
             </TouchableOpacity>
           </View>
         </LinearGradient>
@@ -115,6 +121,19 @@ const OrderHistoryPage = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.scrollContent, isWeb && styles.webWidthLimit]}
       >
+        {showSearch && (
+          <View style={styles.searchBar}>
+            <Ionicons name="search-outline" size={20} color="#667eea" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search by Order ID or Product..."
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoFocus
+            />
+          </View>
+        )}
         {/* Summary Cards */}
         <View style={styles.summaryContainer}>
           <LinearGradient colors={['#667eea', '#764ba2']} style={styles.summaryCard}>
@@ -226,7 +245,13 @@ const OrderHistoryPage = () => {
                   <Ionicons name="card-outline" size={16} color="#666" />
                   <Text style={styles.paymentText}>{order.paymentMethod}</Text>
                 </View>
-                <TouchableOpacity style={styles.detailsBtn}>
+                <TouchableOpacity 
+                  style={styles.detailsBtn}
+                  onPress={() => router.push({
+                    pathname: '/order-details',
+                    params: { id: order.id }
+                  })}
+                >
                   <Text style={styles.detailsBtnText}>View Details</Text>
                   <Ionicons name="chevron-forward" size={16} color="#667eea" />
                 </TouchableOpacity>
@@ -493,6 +518,17 @@ const styles = StyleSheet.create({
   orderSummary: {
     flex: 1,
   },
+  itemNames: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  totalAmount: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#667eea',
+  },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -593,6 +629,23 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    height: 50,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    color: '#333',
   },
 });
 

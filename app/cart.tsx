@@ -265,12 +265,7 @@ const CartPage = () => {
 
 
       {cartItems.length > 0 ? (
-        <View
-          style={[
-            styles.checkoutBar,
-            { paddingBottom: Math.max(insets.bottom, 15) },
-          ]}
-        >
+        <View style={[styles.bottomBar, isWeb && styles.webBottomBar, { paddingBottom: Math.max(insets.bottom, 15) }]}>
           <View style={[styles.checkoutContent, isWeb && styles.webWidthLimit]}>
             <View style={styles.checkoutInfo}>
               <Text style={styles.checkoutTotalLabel}>Total Amount</Text>
@@ -597,7 +592,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#667eea',
   },
-  checkoutBar: {
+  bottomBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -607,12 +602,25 @@ const styles = StyleSheet.create({
     borderTopColor: '#EBF0FF',
     paddingVertical: 15,
     paddingHorizontal: 20,
-    paddingBottom: Platform.OS === 'ios' ? 30 : 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
     shadowRadius: 10,
     elevation: 20,
+  },
+  webBottomBar: {
+    position: 'relative',
+    borderTopWidth: 1,
+    shadowOpacity: 0,
+    elevation: 0,
+    paddingBottom: 20,
+  },
+  webCheckoutBar: {
+    position: 'relative',
+    borderTopWidth: 1,
+    shadowOpacity: 0,
+    elevation: 0,
+    paddingBottom: 20,
   },
   checkoutContent: {
     flexDirection: 'row',

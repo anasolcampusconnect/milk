@@ -212,40 +212,73 @@ const ProductDetailsPage = () => {
                 <Text style={styles.highlightText}>FSSAI Certified</Text>
               </View>
             </View>
+
+            {isWeb && (
+              <View style={styles.webActionSection}>
+                <View style={styles.quantityContainer}>
+                  <TouchableOpacity
+                    style={styles.qtyBtn}
+                    onPress={() => setQuantity(Math.max(1, quantity - 1))}
+                  >
+                    <Ionicons name="remove" size={20} color="#333" />
+                  </TouchableOpacity>
+                  <Text style={styles.qtyText}>{quantity}</Text>
+                  <TouchableOpacity
+                    style={styles.qtyBtn}
+                    onPress={() => setQuantity(quantity + 1)}
+                  >
+                    <Ionicons name="add" size={20} color="#333" />
+                  </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity style={styles.addToCartBtn} onPress={addToCart} activeOpacity={0.8}>
+                  <LinearGradient
+                    colors={['#667eea', '#764ba2']}
+                    style={styles.addToCartGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                  >
+                    <Ionicons name="cart-outline" size={20} color="#FFF" style={{ marginRight: 8 }} />
+                    <Text style={styles.addToCartText}>Add to Cart • ₹{product.price * quantity}</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
 
+      {!isWeb && (
+        <View style={styles.bottomBar}>
+          <View style={styles.quantityContainer}>
+            <TouchableOpacity
+              style={styles.qtyBtn}
+              onPress={() => setQuantity(Math.max(1, quantity - 1))}
+            >
+              <Ionicons name="remove" size={20} color="#333" />
+            </TouchableOpacity>
+            <Text style={styles.qtyText}>{quantity}</Text>
+            <TouchableOpacity
+              style={styles.qtyBtn}
+              onPress={() => setQuantity(quantity + 1)}
+            >
+              <Ionicons name="add" size={20} color="#333" />
+            </TouchableOpacity>
+          </View>
 
-      <View style={[styles.bottomBar, isWeb && styles.webBottomBar]}>
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity
-            style={styles.qtyBtn}
-            onPress={() => setQuantity(Math.max(1, quantity - 1))}
-          >
-            <Ionicons name="remove" size={20} color="#333" />
-          </TouchableOpacity>
-          <Text style={styles.qtyText}>{quantity}</Text>
-          <TouchableOpacity
-            style={styles.qtyBtn}
-            onPress={() => setQuantity(quantity + 1)}
-          >
-            <Ionicons name="add" size={20} color="#333" />
+          <TouchableOpacity style={styles.addToCartBtn} onPress={addToCart} activeOpacity={0.8}>
+            <LinearGradient
+              colors={['#667eea', '#764ba2']}
+              style={styles.addToCartGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <Ionicons name="cart-outline" size={20} color="#FFF" style={{ marginRight: 8 }} />
+              <Text style={styles.addToCartText}>Add to Cart • ₹{product.price * quantity}</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.addToCartBtn} onPress={addToCart} activeOpacity={0.8}>
-          <LinearGradient
-            colors={['#667eea', '#764ba2']}
-            style={styles.addToCartGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          >
-            <Ionicons name="cart-outline" size={20} color="#FFF" style={{ marginRight: 8 }} />
-            <Text style={styles.addToCartText}>Add to Cart • ₹{product.price * quantity}</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
+      )}
     </View>
   );
 };
@@ -455,20 +488,13 @@ const styles = StyleSheet.create({
     borderTopColor: '#F3F4F6',
     alignItems: 'center',
     gap: 16,
+    display: isWeb ? 'none' : 'flex', // Extra safety for web
   },
-  webBottomBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    maxWidth: 1100, // Adjusted for consistency
-    alignSelf: 'center',
-    borderRadius: 20,
-    borderTopWidth: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -5 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+  webActionSection: {
+    flexDirection: 'row',
+    marginTop: 30,
+    gap: 16,
+    alignItems: 'center',
   },
   quantityContainer: {
     flexDirection: 'row',

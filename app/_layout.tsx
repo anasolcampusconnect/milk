@@ -19,19 +19,19 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <AuthProvider>
         <View style={styles.container}>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-            <Stack.Screen name="products" options={{ headerShown: false }} />
-            <Stack.Screen name="order-history" options={{ headerShown: false }} />  
-            <Stack.Screen
-              name="product-details"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="cart" options={{ headerShown: false }} />
-            <Stack.Screen name="wishlist" options={{ headerShown: false }} />
-            <Stack.Screen name="checkout" options={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="login" />
+            <Stack.Screen name="dashboard" />
+            <Stack.Screen name="products" />
+            <Stack.Screen name="order-history" />
+            <Stack.Screen name="order-details" />
+            <Stack.Screen name="product-details" />
+            <Stack.Screen name="cart" />
+            <Stack.Screen name="wishlist" />
+            <Stack.Screen name="checkout" />
+            <Stack.Screen name="address" />
+            <Stack.Screen name="profile" />
           </Stack>
         </View>
         <StatusBar style="auto" />

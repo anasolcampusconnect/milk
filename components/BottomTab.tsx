@@ -24,6 +24,7 @@ const BottomTab = () => {
     { name: 'Products', icon: 'grid-outline', activeIcon: 'grid', path: '/products' },
     { name: 'Cart', icon: 'cart-outline', activeIcon: 'cart', path: '/cart' },
     { name: 'Wishlist', icon: 'heart-outline', activeIcon: 'heart', path: '/wishlist' },
+    { name: 'Profile', icon: 'person-outline', activeIcon: 'person', path: '/profile' },
   ];
 
   const isActive = (path: string) => pathname === path;

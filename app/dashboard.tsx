@@ -76,9 +76,14 @@ const HomePage = () => {
     { id: 8, name: 'Low Fat Milk', description: 'Skimmed milk for healthy lifestyle', price: 55, unit: 'Liter', originalPrice: 65, image: require('../assets/images/low_fat_milk.png'), category: 'milk', rating: 4.5, reviews: 145, badge: 'Health', type: 'Low Fat' },
   ];
 
-  const filteredProducts = selectedCategory === 'all'
-    ? products
-    : products.filter(p => p.category === selectedCategory);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         p.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const offers = [
     { id: 1, title: 'First Order', discount: '20% OFF', description: 'on your first purchase', code: 'WELCOME20', color: '#667eea', bgColor: 'rgba(102,126,234,0.1)' },
@@ -154,11 +159,11 @@ const HomePage = () => {
 
               {showDropdown ? (
                 <View style={styles.dropdownMenu}>
-                  <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); /* handle profile */ }}>
+                  <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); router.push('/profile'); }}>
                     <Ionicons name="person-outline" size={20} color="#333" />
                     <Text style={styles.dropdownText}>My Profile</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); /* handle address */ }}>
+                  <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); router.push('/address'); }}>
                     <Ionicons name="location-outline" size={20} color="#333" />
                     <Text style={styles.dropdownText}>Delivery Address</Text>
                   </TouchableOpacity>
@@ -247,16 +252,52 @@ const HomePage = () => {
           <View style={[isWeb && styles.webWidthLimit, isWeb && { alignSelf: 'center', width: '100%' }]}>
 
 
-            <View style={[styles.searchContainer, isWeb && styles.webSearchContainer]}>
-              <Ionicons name="search-outline" size={isWeb ? 24 : 20} color="#999" style={styles.searchIcon} />
-              <TextInput
-                style={[styles.searchInput, isWeb && { fontSize: 16 }]}
-                placeholder="Search for milk, curd, paneer..."
-                placeholderTextColor="#999"
-              />
-              <TouchableOpacity style={styles.filterButton}>
-                <Ionicons name="options-outline" size={isWeb ? 24 : 20} color="#667eea" />
-              </TouchableOpacity>
+            <View style={{ position: 'relative', zIndex: 2000 }}>
+              <View style={[styles.searchContainer, isWeb && styles.webSearchContainer]}>
+                <Ionicons name="search-outline" size={isWeb ? 24 : 20} color="#999" style={styles.searchIcon} />
+                <TextInput
+                  style={[styles.searchInput, isWeb && { fontSize: 16 }]}
+                  placeholder="Search for milk, curd, paneer..."
+                  placeholderTextColor="#999"
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                />
+                <TouchableOpacity style={styles.filterButton}>
+                  <Ionicons name="options-outline" size={isWeb ? 24 : 20} color="#667eea" />
+                </TouchableOpacity>
+              </View>
+
+              {searchQuery.length > 0 && (
+                <View style={[styles.searchResultsList, isWeb && styles.webSearchResults]}>
+                  <ScrollView style={{ maxHeight: 300 }} keyboardShouldPersistTaps="handled">
+                    {filteredProducts.map((product) => (
+                      <TouchableOpacity 
+                        key={product.id} 
+                        style={styles.searchResultItem}
+                        onPress={() => {
+                          setSearchQuery('');
+                          router.push({ pathname: '/product-details', params: { id: product.id } });
+                        }}
+                      >
+                        <Image source={product.image} style={styles.searchResultImage} />
+                        <View style={styles.searchResultInfo}>
+                          <Text style={styles.searchResultName}>{product.name}</Text>
+                          <Text style={styles.searchResultCategory}>{product.type}</Text>
+                        </View>
+                        <View style={{ alignItems: 'flex-end', gap: 2 }}>
+                          <Text style={styles.searchResultPrice}>₹{product.price}</Text>
+                          <Ionicons name="chevron-forward" size={14} color="#CCC" />
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                    {filteredProducts.length === 0 && (
+                      <View style={styles.noResults}>
+                        <Text style={styles.noResultsText}>No products found for "{searchQuery}"</Text>
+                      </View>
+                    )}
+                  </ScrollView>
+                </View>
+              )}
             </View>
 
 
@@ -969,6 +1010,67 @@ const styles = StyleSheet.create({
   unitText: {
     fontSize: 12,
     color: '#666',
+  },
+  searchResultsList: {
+    position: 'absolute',
+    top: isWeb ? 55 : 55, 
+    left: isWeb ? 'auto' : 20,
+    right: isWeb ? 'auto' : 20,
+    backgroundColor: '#FFF',
+    borderRadius: 15,
+    padding: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+    zIndex: 3000,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  webSearchResults: {
+    width: 800,
+    alignSelf: 'center',
+    top: 65,
+  },
+  searchResultItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    gap: 12,
+  },
+  searchResultImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: '#F9FAFB',
+  },
+  searchResultInfo: {
+    flex: 1,
+  },
+  searchResultName: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  searchResultCategory: {
+    fontSize: 11,
+    color: '#999',
+  },
+  searchResultPrice: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#667eea',
+  },
+  noResults: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  noResultsText: {
+    color: '#999',
+    fontSize: 14,
   },
   addButton: {
     width: 36,

@@ -143,10 +143,14 @@ const ProductsPage = () => {
     },
   ];
 
-  const filteredProducts =
-    selectedCategory === "all"
-      ? products
-      : products.filter((p) => p.category === selectedCategory);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = products.filter((p) => {
+    const matchesCategory = selectedCategory === "all" || p.category === selectedCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         p.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const addToCart = (item: any) => {
     setCartItems((prev) => ({ ...prev, [item.id]: (prev[item.id] || 0) + 1 }));
@@ -389,6 +393,8 @@ const ProductsPage = () => {
               style={styles.searchInput}
               placeholder="Search in this category..."
               placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
             <TouchableOpacity style={styles.filterBtn}>
               <Ionicons name="options-outline" size={20} color="#667eea" />
