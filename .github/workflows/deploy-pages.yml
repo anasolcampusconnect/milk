@@ -24,8 +24,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # - name: Export Expo Web
-      # run: npx expo export --platform web
+      - name: Export Expo Web
+        run: npx expo export --platform web
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
