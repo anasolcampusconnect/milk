@@ -214,4 +214,4 @@ const styles = StyleSheet.create({
   },
 });           
 
-export default LivestockOnboarding;
+export default LivestockOnboarding;       
