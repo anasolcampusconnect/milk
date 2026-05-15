@@ -431,12 +431,14 @@ const styles = StyleSheet.create({
     color: '#7B61FF',
     fontSize: 12,
     fontWeight: '700',
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   mainBtn: {
     height: 52,
     borderRadius: 15,
     overflow: 'hidden',
     marginBottom: 15,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   btnGradient: {
     flex: 1,
@@ -481,6 +483,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F3F4F6',
     gap: 6,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   socialText: {
     fontSize: 13,
@@ -502,6 +505,7 @@ const styles = StyleSheet.create({
     color: '#7B61FF',
     fontWeight: '800',
     fontSize: 13,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   backRow: {
     flexDirection: 'row',

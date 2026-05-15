@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       web: {
         backdropFilter: 'blur(12px)',
+        cursor: 'pointer',
       },
     }),
   },

@@ -134,7 +134,7 @@ const WishlistPage = () => {
 
       <View style={styles.header}>
         <LinearGradient colors={['#FFF', '#F8F9FA']} style={[styles.headerGradient, { paddingTop: isWeb ? 20 : Math.max(insets.top, 20) }]}>
-          <View style={[styles.headerContent, isWeb && styles.webWidthLimit]}>
+          <View style={[styles.headerContent, isWeb && styles.webHeaderLimit]}>
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.iconCircle}
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   webWidthLimit: {
-    maxWidth: 1200,
+    maxWidth: 1100, // Matching other pages for clean side margins
     width: '100%',
     alignSelf: 'center',
   },
@@ -268,7 +268,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: isWeb ? 40 : 20,
+  },
+  webHeaderLimit: {
+    maxWidth: 1100,
+    alignSelf: 'center',
+    width: '100%',
   },
   headerTitle: {
     fontSize: 20,
@@ -282,6 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(102, 126, 234, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   cartBadge: {
     position: 'absolute',
@@ -366,6 +372,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   imgBox: {
     height: 140,
@@ -462,6 +469,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   addBtnGradient: {
     width: '100%',
@@ -505,6 +513,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   shopNowBtnGradient: {
     flexDirection: 'row',

@@ -114,20 +114,28 @@ const HomePage = () => {
         ) : null}
       </View>
       <View style={styles.productInfo}>
+        <View style={styles.productHeaderRow}>
+          <Text style={styles.productType}>{item.type}</Text>
+          <View style={styles.stockBadge}>
+            <Text style={styles.stockText}>In Stock</Text>
+          </View>
+        </View>
         <Text style={styles.productName}>{item.name}</Text>
         <Text style={styles.productDescription} numberOfLines={isWeb ? 1 : 2}>{item.description}</Text>
         <View style={styles.ratingContainer}>
           <Ionicons name="star" size={14} color="#fbbf24" />
           <Text style={styles.ratingText}>{item.rating}</Text>
-          <Text style={styles.reviewText}>({item.reviews} reviews)</Text>
+          <Text style={styles.reviewText}>({item.reviews})</Text>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={styles.productPrice}>₹{item.price}</Text>
-          <Text style={styles.originalPrice}>₹{item.originalPrice}</Text>
+          <View style={styles.priceSubRow}>
+            <Text style={styles.productPrice}>₹{item.price}</Text>
+            <Text style={styles.originalPrice}>₹{item.originalPrice}</Text>
+          </View>
           <Text style={styles.unitText}>/{item.unit}</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton} activeOpacity={0.7}>
         <Ionicons name="add" size={24} color="#FFF" />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -138,7 +146,7 @@ const HomePage = () => {
 
       <View style={styles.header}>
         <LinearGradient colors={['#FFF', '#F8F9FA']} style={[styles.headerGradient, { paddingTop: isWeb ? 20 : Math.max(insets.top, 20) }]}>
-          <View style={[styles.headerContent, isWeb && styles.webWidthLimit]}>
+          <View style={[styles.headerContent, isWeb && styles.webHeaderLimit]}>
             <View style={{ position: 'relative', zIndex: 100 }}>
               <TouchableOpacity onPress={() => setShowDropdown(!showDropdown)}>
                 <Ionicons name="menu-outline" size={28} color="#333" />
@@ -153,6 +161,10 @@ const HomePage = () => {
                   <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); /* handle address */ }}>
                     <Ionicons name="location-outline" size={20} color="#333" />
                     <Text style={styles.dropdownText}>Delivery Address</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.dropdownItem} onPress={() => { setShowDropdown(false); router.push('/order-history'); }}>
+                    <Ionicons name="receipt-outline" size={20} color="#333" />
+                    <Text style={styles.dropdownText}>Order History</Text>
                   </TouchableOpacity>
                 </View>
               ) : null}
@@ -197,34 +209,36 @@ const HomePage = () => {
               colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
               style={StyleSheet.absoluteFillObject}
             />
-            <View style={[styles.heroContent, isWeb && styles.webWidthLimit, { zIndex: 1 }]}>
-              <Text style={[styles.heroTitle, isWeb && styles.webHeroTitle]}>Fresh Milk Delivered</Text>
-              <Text style={styles.heroSubtitle}>Directly from farm to your doorstep</Text>
-              <View style={styles.deliveryInfo}>
-                <Ionicons name="time" size={16} color="#FFF" />
-                <Text style={styles.deliveryText}>Morning 6-8 AM • Evening 5-7 PM</Text>
+            <View style={[styles.heroContent, isWeb && styles.webHeroContent, { zIndex: 1 }]}>
+              <View style={{ alignItems: 'center', width: '100%' }}>
+                <Text style={[styles.heroTitle, isWeb && styles.webHeroTitle]}>Fresh Milk Delivered</Text>
+                <Text style={[styles.heroSubtitle, isWeb && styles.webHeroSubtitle]}>Directly from farm to your doorstep</Text>
+                <View style={styles.deliveryInfo}>
+                  <Ionicons name="time" size={isWeb ? 24 : 16} color="#FFF" />
+                  <Text style={[styles.deliveryText, isWeb && { fontSize: 20 }]}>Morning 6-8 AM • Evening 5-7 PM</Text>
+                </View>
+                <TouchableOpacity style={[styles.orderButton, isWeb && styles.webOrderButton]}>
+                  <Text style={[styles.orderButtonText, { color: '#333' }, isWeb && { fontSize: 18 }]}>Order Now</Text>
+                  <Ionicons name="arrow-forward" size={isWeb ? 22 : 18} color="#333" />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.orderButton}>
-                <Text style={[styles.orderButtonText, { color: '#333' }]}>Order Now</Text>
-                <Ionicons name="arrow-forward" size={18} color="#333" />
-              </TouchableOpacity>
+
             </View>
 
-
-            <View style={[styles.heroStats, isWeb && styles.webWidthLimit, isWeb && { marginTop: 20 }, { zIndex: 1 }]}>
+            <View style={[styles.heroStats, isWeb && styles.webHeroStats, { zIndex: 1 }]}>
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>10K+</Text>
-                <Text style={styles.statLabel}>Happy Families</Text>
+                <Text style={[styles.statNumber, isWeb && { fontSize: 24 }]}>10K+</Text>
+                <Text style={[styles.statLabel, isWeb && { fontSize: 14 }]}>Happy Families</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>5000L+</Text>
-                <Text style={styles.statLabel}>Daily Delivery</Text>
+                <Text style={[styles.statNumber, isWeb && { fontSize: 24 }]}>5000L+</Text>
+                <Text style={[styles.statLabel, isWeb && { fontSize: 14 }]}>Daily Delivery</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>4.9★</Text>
-                <Text style={styles.statLabel}>Customer Rating</Text>
+                <Text style={[styles.statNumber, isWeb && { fontSize: 24 }]}>4.9★</Text>
+                <Text style={[styles.statLabel, isWeb && { fontSize: 14 }]}>Customer Rating</Text>
               </View>
             </View>
           </ImageBackground>
@@ -233,15 +247,15 @@ const HomePage = () => {
           <View style={[isWeb && styles.webWidthLimit, isWeb && { alignSelf: 'center', width: '100%' }]}>
 
 
-            <View style={styles.searchContainer}>
-              <Ionicons name="search-outline" size={20} color="#999" style={styles.searchIcon} />
+            <View style={[styles.searchContainer, isWeb && styles.webSearchContainer]}>
+              <Ionicons name="search-outline" size={isWeb ? 24 : 20} color="#999" style={styles.searchIcon} />
               <TextInput
-                style={styles.searchInput}
+                style={[styles.searchInput, isWeb && { fontSize: 16 }]}
                 placeholder="Search for milk, curd, paneer..."
                 placeholderTextColor="#999"
               />
               <TouchableOpacity style={styles.filterButton}>
-                <Ionicons name="options-outline" size={20} color="#667eea" />
+                <Ionicons name="options-outline" size={isWeb ? 24 : 20} color="#667eea" />
               </TouchableOpacity>
             </View>
 
@@ -249,52 +263,97 @@ const HomePage = () => {
 
           <View style={[styles.section, isWeb && styles.webWidthLimit]}>
             <Text style={styles.sectionTitle}>Shop by Category</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
-              {categories.map((category) => (
-                <TouchableOpacity
-                  key={category.id}
-                  style={styles.categoryCard}
-                  onPress={() => {
-                    // CHANGE: Navigate to products page with the category ID
-                    router.push({
-                      pathname: '/products',
-                      params: { category: category.id }
-                    });
-                  }}
-                >
-                  <View style={[styles.categoryIcon, { backgroundColor: `${category.color}15` }]}>
-                    <Ionicons name={category.icon} size={24} color={category.color} />
-                  </View>
-                  <Text style={styles.categoryName}>{category.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+            {isWeb ? (
+              <View style={styles.webCategoryGrid}>
+                {categories.map((category) => (
+                  <TouchableOpacity
+                    key={category.id}
+                    style={styles.webCategoryCard}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/products',
+                        params: { category: category.id }
+                      });
+                    }}
+                  >
+                    <View style={[styles.categoryIcon, { backgroundColor: `${category.color}15`, width: 70, height: 70, borderRadius: 35 }]}>
+                      <Ionicons name={category.icon} size={32} color={category.color} />
+                    </View>
+                    <Text style={[styles.categoryName, { fontSize: 14, fontWeight: '500' }]}>{category.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
+                {categories.map((category) => (
+                  <TouchableOpacity
+                    key={category.id}
+                    style={styles.categoryCard}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/products',
+                        params: { category: category.id }
+                      });
+                    }}
+                  >
+                    <View style={[styles.categoryIcon, { backgroundColor: `${category.color}15` }]}>
+                      <Ionicons name={category.icon} size={24} color={category.color} />
+                    </View>
+                    <Text style={styles.categoryName}>{category.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
           </View>
 
 
-            <View style={styles.offersSection}>
+            <View style={[styles.offersSection, isWeb && styles.webWidthLimit]}>
               <Text style={styles.sectionTitle}>Special Offers</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.offersScroll}>
-                {offers.map((offer) => (
-                  <LinearGradient
-                    key={offer.id}
-                    colors={['rgba(102,126,234,0.1)', 'rgba(118,75,162,0.05)']}
-                    style={[styles.offerCard, isWeb && { width: 350 }]}
-                  >
-                    <View style={styles.offerContent}>
-                      <Text style={[styles.offerDiscount, { color: offer.color }]}>{offer.discount}</Text>
-                      <Text style={styles.offerTitle}>{offer.title}</Text>
-                      <Text style={styles.offerDescription}>{offer.description}</Text>
-                      <View style={styles.offerCodeContainer}>
-                        <Text style={styles.offerCode}>{offer.code}</Text>
-                        <TouchableOpacity>
-                          <Ionicons name="copy-outline" size={18} color={offer.color} />
-                        </TouchableOpacity>
+              {isWeb ? (
+                <View style={styles.webOffersGrid}>
+                  {offers.map((offer) => (
+                    <LinearGradient
+                      key={offer.id}
+                      colors={['#FFFFFF', '#F8F9FA']}
+                      style={styles.webOfferCard}
+                    >
+                      <View style={styles.offerContent}>
+                        <Text style={[styles.offerDiscount, { color: offer.color }]}>{offer.discount}</Text>
+                        <Text style={[styles.offerTitle, { fontSize: 18 }]}>{offer.title}</Text>
+                        <Text style={[styles.offerDescription, { fontSize: 14 }]}>{offer.description}</Text>
+                        <View style={styles.offerCodeContainer}>
+                          <Text style={styles.offerCode}>{offer.code}</Text>
+                          <TouchableOpacity>
+                            <Ionicons name="copy-outline" size={18} color={offer.color} />
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
-                  </LinearGradient>
-                ))}
-              </ScrollView>
+                    </LinearGradient>
+                  ))}
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.offersScroll}>
+                  {offers.map((offer) => (
+                    <LinearGradient
+                      key={offer.id}
+                      colors={['rgba(102,126,234,0.1)', 'rgba(118,75,162,0.05)']}
+                      style={[styles.offerCard, isWeb && { width: 350 }]}
+                    >
+                      <View style={styles.offerContent}>
+                        <Text style={[styles.offerDiscount, { color: offer.color }]}>{offer.discount}</Text>
+                        <Text style={styles.offerTitle}>{offer.title}</Text>
+                        <Text style={styles.offerDescription}>{offer.description}</Text>
+                        <View style={styles.offerCodeContainer}>
+                          <Text style={styles.offerCode}>{offer.code}</Text>
+                          <TouchableOpacity>
+                            <Ionicons name="copy-outline" size={18} color={offer.color} />
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </LinearGradient>
+                  ))}
+                </ScrollView>
+              )}
             </View>
 
 
@@ -417,7 +476,7 @@ const styles = StyleSheet.create({
   },
   // Web specific constraints
   webWidthLimit: {
-    maxWidth: 1200,
+    maxWidth: 1100, // Reduced to create more "clean" empty space on sides
     alignSelf: 'center',
     width: '100%',
   },
@@ -447,8 +506,76 @@ const styles = StyleSheet.create({
   },
   webProductImageContainer: {
     width: '100%',
-    height: 180,
+    height: 220,
     marginRight: 0,
+  },
+  webHeroContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  webHeroSubtitle: {
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 25,
+  },
+  webOrderButton: {
+    paddingHorizontal: 40,
+    paddingVertical: 18,
+  },
+  webSearchContainer: {
+    width: 800,
+    alignSelf: 'center',
+    marginTop: -30,
+    height: 70,
+    borderRadius: 35,
+    paddingHorizontal: 25,
+  },
+  webHeroStats: {
+    width: '80%',
+    maxWidth: 900,
+    alignSelf: 'center',
+    padding: 25,
+    borderRadius: 25,
+    marginTop: 20,
+  },
+  webCategoryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 0,
+    gap: 20,
+  },
+  webCategoryCard: {
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    padding: 20,
+    borderRadius: 20,
+    width: '15%',
+    minWidth: 120,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+    cursor: 'pointer',
+  },
+  webOffersGrid: {
+    flexDirection: 'row',
+    gap: 20,
+    justifyContent: 'space-between',
+  },
+  webOfferCard: {
+    flex: 1,
+    padding: 25,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
+    elevation: 5,
   },
   header: {
     position: 'absolute',
@@ -467,10 +594,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: isWeb ? 40 : 20,
+  },
+  webHeaderLimit: {
+    maxWidth: 1100, // Reverted to match main content width for more distance
+    alignSelf: 'center',
+    width: '100%',
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: isWeb ? 28 : 22,
     fontWeight: 'bold',
     color: '#667eea',
   },
@@ -481,6 +613,7 @@ const styles = StyleSheet.create({
   },
   logoutBtn: {
     padding: 4,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   dropdownMenu: {
     position: 'absolute',
@@ -489,7 +622,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderRadius: 12,
     padding: 8,
-    width: 160,
+    width: 200,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -559,6 +692,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
     gap: 8,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   orderButtonText: {
     color: '#667eea',
@@ -621,11 +755,11 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: isWeb ? 32 : 22,
     fontWeight: 'bold',
     color: '#333',
-    marginHorizontal: 20,
-    marginBottom: 15,
+    marginHorizontal: isWeb ? 0 : 20,
+    marginBottom: isWeb ? 30 : 15,
   },
   categoriesScroll: {
     paddingHorizontal: 15,
@@ -637,6 +771,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     minWidth: 80,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   categoryCardActive: {
     backgroundColor: '#667eea15',
@@ -788,6 +923,35 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   priceContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  productHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  productType: {
+    fontSize: 10,
+    color: '#667eea',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  stockBadge: {
+    backgroundColor: '#F0FDF4',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  stockText: {
+    fontSize: 8,
+    color: '#166534',
+    fontWeight: 'bold',
+  },
+  priceSubRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
     gap: 6,

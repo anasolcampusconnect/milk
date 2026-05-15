@@ -272,7 +272,7 @@ const ProductsPage = () => {
             { paddingTop: isWeb ? 20 : Math.max(insets.top, 20) },
           ]}
         >
-          <View style={[styles.headerContent, isWeb && styles.webWidthLimit]}>
+          <View style={[styles.headerContent, isWeb && styles.webHeaderLimit]}>
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.iconCircle}
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FA",
   },
   webWidthLimit: {
-    maxWidth: 1200,
+    maxWidth: 1100, // Matching dashboard for clean side margins
     width: "100%",
     alignSelf: "center",
   },
@@ -455,7 +455,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: isWeb ? 40 : 10,
+  },
+  webHeaderLimit: {
+    maxWidth: 1100,
+    alignSelf: "center",
+    width: "100%",
   },
   headerTitle: {
     fontSize: 20,
@@ -469,6 +474,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(102, 126, 234, 0.1)",
     justifyContent: "center",
     alignItems: "center",
+    cursor: isWeb ? "pointer" : "auto",
   },
   cartBadge: {
     position: "absolute",
@@ -500,6 +506,7 @@ const styles = StyleSheet.create({
   catCard: {
     alignItems: "center",
     marginRight: 24,
+    cursor: isWeb ? "pointer" : "auto",
   },
   catIcon: {
     width: 55,
@@ -587,6 +594,7 @@ const styles = StyleSheet.create({
   webPCard: {
     width: "23%",
     marginBottom: 20,
+    cursor: "pointer",
   },
   imgBox: {
     height: 140,

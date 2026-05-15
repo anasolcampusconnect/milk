@@ -143,11 +143,60 @@ const ProductDetailsPage = () => {
               <Text style={styles.unitText}>/ {product.unit}</Text>
             </View>
 
+            {/* Nutritional Facts - NEW */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Nutritional Highlights</Text>
+              <View style={styles.nutritionGrid}>
+                <View style={styles.nutritionCard}>
+                  <Ionicons name="flash" size={20} color="#ed8936" />
+                  <Text style={styles.nutritionValue}>65 kcal</Text>
+                  <Text style={styles.nutritionLabel}>Energy</Text>
+                </View>
+                <View style={styles.nutritionCard}>
+                  <Ionicons name="fitness" size={20} color="#48bb78" />
+                  <Text style={styles.nutritionValue}>3.4g</Text>
+                  <Text style={styles.nutritionLabel}>Protein</Text>
+                </View>
+                <View style={styles.nutritionCard}>
+                  <Ionicons name="shield-checkmark" size={20} color="#667eea" />
+                  <Text style={styles.nutritionValue}>125mg</Text>
+                  <Text style={styles.nutritionLabel}>Calcium</Text>
+                </View>
+                <View style={styles.nutritionCard}>
+                  <Ionicons name="leaf" size={20} color="#38a169" />
+                  <Text style={styles.nutritionValue}>Pure</Text>
+                  <Text style={styles.nutritionLabel}>Organic</Text>
+                </View>
+              </View>
+            </View>
+
             <View style={styles.divider} />
 
             <Text style={styles.sectionTitle}>Description</Text>
             <Text style={styles.descriptionText}>{product.description}</Text>
 
+            {/* Farm Traceability - NEW */}
+            <View style={styles.farmSection}>
+              <LinearGradient colors={['#F0FDF4', '#DCFCE7']} style={styles.farmCard}>
+                <View style={styles.farmHeader}>
+                  <Ionicons name="home" size={24} color="#166534" />
+                  <Text style={styles.farmTitle}>Farm Traceability</Text>
+                </View>
+                <Text style={styles.farmDesc}>Sourced from <Text style={{fontWeight: '700'}}>Green Valley Farm</Text>. Delivered within 4 hours of milking to ensure maximum nutrients.</Text>
+                <View style={styles.qualityRow}>
+                  <View style={styles.qualityItem}>
+                    <Ionicons name="checkmark-circle" size={16} color="#166534" />
+                    <Text style={styles.qualityText}>No Hormones</Text>
+                  </View>
+                  <View style={styles.qualityItem}>
+                    <Ionicons name="checkmark-circle" size={16} color="#166534" />
+                    <Text style={styles.qualityText}>Tested for Purity</Text>
+                  </View>
+                </View>
+              </LinearGradient>
+            </View>
+
+            <View style={styles.divider} />
 
             <View style={styles.highlightsContainer}>
               <View style={styles.highlightItem}>
@@ -221,7 +270,7 @@ const styles = StyleSheet.create({
   },
   webContainer: {
     width: '100%',
-    maxWidth: 1000,
+    maxWidth: 1100, // Adjusted for consistency
     flexDirection: 'row',
     backgroundColor: '#FFF',
     borderRadius: 20,
@@ -278,6 +327,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   detailsSection: {
     padding: 24,
@@ -411,7 +461,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    maxWidth: 1000,
+    maxWidth: 1100, // Adjusted for consistency
     alignSelf: 'center',
     borderRadius: 20,
     borderTopWidth: 0,
@@ -439,6 +489,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   qtyText: {
     fontSize: 16,
@@ -451,6 +502,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 16,
     overflow: 'hidden',
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   addToCartGradient: {
     flex: 1,
@@ -462,6 +514,80 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  section: {
+    marginBottom: 10,
+  },
+  nutritionGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+    gap: 8,
+  },
+  nutritionCard: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    padding: 12,
+    borderRadius: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  nutritionValue: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 6,
+  },
+  nutritionLabel: {
+    fontSize: 10,
+    color: '#999',
+    marginTop: 2,
+  },
+  farmSection: {
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  farmCard: {
+    padding: 20,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+  },
+  farmHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
+  },
+  farmTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#166534',
+  },
+  farmDesc: {
+    fontSize: 13,
+    color: '#166534',
+    opacity: 0.8,
+    lineHeight: 18,
+  },
+  qualityRow: {
+    flexDirection: 'row',
+    gap: 15,
+    marginTop: 15,
+  },
+  qualityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  qualityText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#166534',
   },
 });
 

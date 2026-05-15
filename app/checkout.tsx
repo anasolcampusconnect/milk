@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   webWidthLimit: {
-    maxWidth: 800,
+    maxWidth: 1100, // Matching other pages for clean side margins
     width: '100%',
     alignSelf: 'center',
   },
@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(102, 126, 234, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   scrollContent: {
     paddingTop: 10,
@@ -354,6 +355,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
     position: 'relative',
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   selectCardActive: {
     borderColor: '#667eea',
@@ -397,6 +399,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   paymentIconBox: {
     width: 40,
@@ -464,6 +467,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   placeOrderGradient: {
     flex: 1,
