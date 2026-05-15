@@ -212,6 +212,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     letterSpacing: 0.5,
   },
-});   
+});       
 
 export default LivestockOnboarding;
