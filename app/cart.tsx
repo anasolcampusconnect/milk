@@ -70,7 +70,7 @@ const CartPage = () => {
 
       <View style={styles.header}>
         <LinearGradient colors={['#FFF', '#F8F9FA']} style={[styles.headerGradient, { paddingTop: isWeb ? 20 : Math.max(insets.top, 20) }]}>
-          <View style={[styles.headerContent, isWeb && styles.webWidthLimit]}>
+          <View style={[styles.headerContent, isWeb && styles.webHeaderLimit]}>
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.iconCircle}
@@ -265,12 +265,7 @@ const CartPage = () => {
 
 
       {cartItems.length > 0 ? (
-        <View
-          style={[
-            styles.checkoutBar,
-            { paddingBottom: Math.max(insets.bottom, 15) },
-          ]}
-        >
+        <View style={[styles.bottomBar, isWeb && styles.webBottomBar, { paddingBottom: Math.max(insets.bottom, 15) }]}>
           <View style={[styles.checkoutContent, isWeb && styles.webWidthLimit]}>
             <View style={styles.checkoutInfo}>
               <Text style={styles.checkoutTotalLabel}>Total Amount</Text>
@@ -310,7 +305,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   webWidthLimit: {
-    maxWidth: 1200,
+    maxWidth: 1100, // Matching other pages for clean side margins
     width: '100%',
     alignSelf: 'center',
   },
@@ -337,7 +332,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: isWeb ? 40 : 20,
+  },
+  webHeaderLimit: {
+    maxWidth: 1100,
+    alignSelf: 'center',
+    width: '100%',
   },
   headerTitle: {
     fontSize: 22,
@@ -351,6 +351,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(102, 126, 234, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   scrollContent: {
     paddingTop: 15,
@@ -442,6 +443,7 @@ const styles = StyleSheet.create({
   removeBtn: {
     padding: 6,
     marginBottom: 8,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   quantityControl: {
     flexDirection: 'row',
@@ -462,6 +464,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   qtyText: {
     fontSize: 14,
@@ -505,6 +508,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   shopNowBtnGradient: {
     flexDirection: 'row',
@@ -588,7 +592,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#667eea',
   },
-  checkoutBar: {
+  bottomBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -598,12 +602,25 @@ const styles = StyleSheet.create({
     borderTopColor: '#EBF0FF',
     paddingVertical: 15,
     paddingHorizontal: 20,
-    paddingBottom: Platform.OS === 'ios' ? 30 : 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
     shadowRadius: 10,
     elevation: 20,
+  },
+  webBottomBar: {
+    position: 'relative',
+    borderTopWidth: 1,
+    shadowOpacity: 0,
+    elevation: 0,
+    paddingBottom: 20,
+  },
+  webCheckoutBar: {
+    position: 'relative',
+    borderTopWidth: 1,
+    shadowOpacity: 0,
+    elevation: 0,
+    paddingBottom: 20,
   },
   checkoutContent: {
     flexDirection: 'row',
@@ -645,6 +662,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   checkoutBtnGradient: {
     flex: 1,

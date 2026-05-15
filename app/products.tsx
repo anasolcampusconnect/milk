@@ -143,10 +143,14 @@ const ProductsPage = () => {
     },
   ];
 
-  const filteredProducts =
-    selectedCategory === "all"
-      ? products
-      : products.filter((p) => p.category === selectedCategory);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = products.filter((p) => {
+    const matchesCategory = selectedCategory === "all" || p.category === selectedCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         p.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const addToCart = (item: any) => {
     setCartItems((prev) => ({ ...prev, [item.id]: (prev[item.id] || 0) + 1 }));
@@ -272,7 +276,7 @@ const ProductsPage = () => {
             { paddingTop: isWeb ? 20 : Math.max(insets.top, 20) },
           ]}
         >
-          <View style={[styles.headerContent, isWeb && styles.webWidthLimit]}>
+          <View style={[styles.headerContent, isWeb && styles.webHeaderLimit]}>
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.iconCircle}
@@ -389,6 +393,8 @@ const ProductsPage = () => {
               style={styles.searchInput}
               placeholder="Search in this category..."
               placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
             <TouchableOpacity style={styles.filterBtn}>
               <Ionicons name="options-outline" size={20} color="#667eea" />
@@ -425,7 +431,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F9FA",
   },
   webWidthLimit: {
-    maxWidth: 1200,
+    maxWidth: 1100, // Matching dashboard for clean side margins
     width: "100%",
     alignSelf: "center",
   },
@@ -455,7 +461,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: isWeb ? 40 : 10,
+  },
+  webHeaderLimit: {
+    maxWidth: 1100,
+    alignSelf: "center",
+    width: "100%",
   },
   headerTitle: {
     fontSize: 20,
@@ -469,6 +480,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(102, 126, 234, 0.1)",
     justifyContent: "center",
     alignItems: "center",
+    cursor: isWeb ? "pointer" : "auto",
   },
   cartBadge: {
     position: "absolute",
@@ -500,6 +512,7 @@ const styles = StyleSheet.create({
   catCard: {
     alignItems: "center",
     marginRight: 24,
+    cursor: isWeb ? "pointer" : "auto",
   },
   catIcon: {
     width: 55,
@@ -587,6 +600,7 @@ const styles = StyleSheet.create({
   webPCard: {
     width: "23%",
     marginBottom: 20,
+    cursor: "pointer",
   },
   imgBox: {
     height: 140,

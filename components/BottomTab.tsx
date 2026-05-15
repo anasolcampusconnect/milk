@@ -24,6 +24,7 @@ const BottomTab = () => {
     { name: 'Products', icon: 'grid-outline', activeIcon: 'grid', path: '/products' },
     { name: 'Cart', icon: 'cart-outline', activeIcon: 'cart', path: '/cart' },
     { name: 'Wishlist', icon: 'heart-outline', activeIcon: 'heart', path: '/wishlist' },
+    { name: 'Profile', icon: 'person-outline', activeIcon: 'person', path: '/profile' },
   ];
 
   const isActive = (path: string) => pathname === path;
@@ -79,29 +80,34 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    height: Platform.OS === 'ios' ? 85 : 85,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 20,
+    height: isWeb ? 70 : 85,
+    paddingBottom: isWeb ? 0 : (Platform.OS === 'ios' ? 20 : 20),
     justifyContent: 'space-around',
     alignItems: 'center',
     width: '100%',
   },
   webWidthLimit: {
-    maxWidth: 600, // Keeps the tabs grouped nicely in the center on large screens
+    maxWidth: 800, 
     alignSelf: 'center',
+    marginBottom: 20,
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: '#EBF0FF',
   },
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1, // Uses flex instead of fixed width to scale perfectly
+    flex: 1,
+    cursor: isWeb ? 'pointer' : 'auto',
   },
   iconContainer: {
     position: 'relative',
-    height: 30,
+    height: isWeb ? 26 : 30,
     justifyContent: 'center',
   },
   activeDot: {
     position: 'absolute',
-    bottom: -6,
+    bottom: isWeb ? -4 : -6,
     width: 4,
     height: 4,
     borderRadius: 2,
@@ -109,7 +115,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   tabLabel: {
-    fontSize: 10,
+    fontSize: isWeb ? 12 : 10,
     color: '#999',
     marginTop: 4,
     fontWeight: '500',
