@@ -1,17 +1,17 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  ImageBackground,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  Platform,
-  StyleSheet,
-  ScrollView
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import React from 'react';
+import {
+  ImageBackground,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { useAuth } from '../context/AuthContext'; // <-- 1. Import AuthContext
 
 const LivestockOnboarding = () => {
@@ -212,6 +212,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     letterSpacing: 0.5,
   },
-});
+});   
 
 export default LivestockOnboarding;
