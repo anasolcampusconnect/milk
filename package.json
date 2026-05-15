@@ -2,13 +2,16 @@
   "name": "milk-app",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "homepage": "https://anasolcampusconnect.github.io/milk",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build:web": "expo export -p web",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
